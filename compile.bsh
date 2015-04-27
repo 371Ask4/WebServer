@@ -1,0 +1,6 @@
+#! /bin/bash
+clear
+file=$1
+name=`echo $file | sed -e 's/.c$//g'`
+
+gcc -o `echo $name` `echo $file`

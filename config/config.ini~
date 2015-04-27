@@ -1,0 +1,11 @@
+# Webserver Configuration File
+
+#The Number of Threads in the Threadpool
+THREADS=3
+
+#The Port number of the web server
+PORT=30000
+
+#The Root Directory the is being Served
+PATH=../as4-supplementary/
+

@@ -1,0 +1,108 @@
+#include<errno.h> 
+#include<unistd.h>   
+#include<stdio.h>    
+#include<stdlib.h>    
+#include<string.h>
+#include"http.h"
+
+int main(){
+   
+}
+
+int length(const char** array) {
+   int count = 0;
+   while(array[count]) count++;
+   return count;
+}
+
+char* toString(REQUEST request){
+   char* req_string=(char*)malloc(sizeof(char)*((
+      strlen(request.type->method)+
+      strlen(request.type->path)+
+      strlen(request.type->protocol)+
+      strlen(request.head->user_agent)+
+      strlen(request.head->host)+
+      strlen(request.head->connection)+6)
+   ));
+
+   strcat(req_string,strcat(request.type->method," "));
+   strcat(req_string,strcat(request.type->path," "));
+   strcat(req_string,strcat(request.type->protocol," "));
+
+   strcat(req_string,strcat(request.head->user_agent," "));
+   strcat(req_string,strcat(request.head->host," "));
+   strcat(req_string,request.head->connection);
+   return req_string;
+}
+
+REQUEST parseRequest(char req[MAX_SOCK]){
+   REQUEST request;
+   REQUEST_HEAD head;
+   TYPE type;
+   char* req_token;
+   char* host_token;
+   char* user_token;
+   char* connection_token;
+   const char del[2] = "\n";
+
+   char method[MAX_SOCK];
+   char path[MAX_SOCK];
+   char protocol[MAX_SOCK];
+   char user_agent[MAX_SOCK];
+   char host[MAX_SOCK];
+   char connection[MAX_SOCK];
+
+   req_token=strtok(req,del);
+   host_token=strtok(NULL,del);
+   user_token=strtok(NULL,del);
+
+   connection_token=strtok(NULL,del);
+   while(connection_token!=NULL){
+      strcpy(connection,connection_token);
+      connection[strlen(connection)]='\0';
+      head.connection=connection;
+      connection_token=strtok(NULL,del);
+   }
+   /*
+   if(strcmp(method,GET)==0){
+      printf("%s %s\n",GET,strtok(NULL," "));
+   }else if(strcmp(method,HEAD)==0){
+      printf("%s %s\n",HEAD,strtok(NULL," "));
+   }else if(strcmp(method,DELETE)==0){
+      printf("%s %s\n",DELETE,strtok(NULL," "));
+   }else{
+      printf("%s %s\n",NOT_IMPLEMENTED,strtok(NULL," "));
+   }
+   */
+   
+   strcpy(method,strtok(req_token," "));
+   method[strlen(method)]='\0';
+   printf("%s\n",method);
+   type.method=method;
+
+   strcpy(path,strtok(NULL," "));
+   path[strlen(path)]='\0';
+   printf("%s\n",path);
+   type.path=path;
+
+   strcpy(protocol,strtok(NULL," "));
+   protocol[strlen(protocol)]='\0';
+   printf("%s\n",protocol);
+   type.protocol=protocol;
+
+   strcpy(user_agent,user_token);
+   user_agent[strlen(user_agent)]='\0';
+   printf("%s\n",user_agent);
+   head.user_agent=user_agent;
+
+   
+   strcpy(host,host_token);
+   host[strlen(host)]='\0';
+   printf("%s\n",host);
+   head.host=host;
+
+   printf("%s\n",connection);
+   request.type=&type;
+   request.head=&head;
+   
+}
