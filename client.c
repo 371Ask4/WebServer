@@ -55,6 +55,16 @@ int main(int argc,char* argv[]){
       char path[MAX_SOCK];
       char host[MAX_SOCK];
       char user_agent[MAX_SOCK];
+
+      if(argv[3]==NULL){
+         strcpy(connection,"keep-alive");
+      }else if(strcmp(argv[3],"-c")==0){
+         strcpy(connection,"close");
+      }else{   
+         printf("Wrong option.\n");
+         exit(-1);
+      }
+
    do{
       printf("METHOD:");
       fgets(method,MAX_SOCK,stdin);
@@ -90,19 +100,16 @@ int main(int argc,char* argv[]){
       strcat(req_string,"Host: ");
       strcat(req_string,host);
       strcat(req_string,"\r\n");
-
-      printf("USER AGENT:");
-      fgets(user_agent,MAX_SOCK,stdin);
-      user_agent[strlen(user_agent)-1]='\0';
+      
+      strcpy(user_agent,"GNU bash, version 4.1.2(1)-release (x86_64-redhat-linux-gnu)");
+      user_agent[strlen(user_agent)]='\0';
       head->user_agent=user_agent;
 
       strcat(req_string,"User-Agent: ");
       strcat(req_string,user_agent);
       strcat(req_string,"\r\n");
-
-      printf("CONNECTION:");
-      fgets(connection,MAX_SOCK,stdin);
-      connection[strlen(connection)-1]='\0';
+      
+      connection[strlen(connection)]='\0';
       head->connection=connection;
 
       strcat(req_string,"Connection: ");
