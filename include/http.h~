@@ -50,5 +50,6 @@
    char* toString(REQUEST);
    int length(const char**);
    char* getMIME(char*);
-   void convertToUpperCase(char *);
+   char* convertToUpperCase(char *);
+   int getFileSize(char* );
 #endif

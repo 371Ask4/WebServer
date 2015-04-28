@@ -51,4 +51,6 @@
    int length(const char**);
    char* getMIME(char*);
    char* convertToUpperCase(char *);
+   int getFileSize(char* );
+   void printContentType(int ,char * );
 #endif
