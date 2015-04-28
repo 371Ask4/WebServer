@@ -15,6 +15,6 @@
 #define PATH 1
 #define THREADS 2
 
-char* config[3];
+char** config;
 void initFromConfig(char**);
 #endif

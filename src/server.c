@@ -15,11 +15,11 @@
 
 void*handle_requests_loop(void* data);
 
-int sockets[THREADS];
 pthread_mutex_t *mutexes;
 pthread_cond_t *conditions;
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+int* sockets;
 int main(int argc,char* argv[]){
    int port,sock,serverlen,clientlen;
    struct sockaddr_in server,client;
@@ -27,15 +27,16 @@ int main(int argc,char* argv[]){
    struct sockaddr* clientptr;
    struct hostent* rem;
    int        i=0;                               
-   int        thr_id[THREADS];      
-   pthread_t  p_threads[THREADS];   	
-   mutexes = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t) * THREADS);
-   conditions = (pthread_cond_t *) malloc(sizeof(pthread_cond_t) * THREADS);
-
-   config[PORT]=(char*)malloc(sizeof(char*)*MAX_CONFIG_LINE);
-   config[PATH]=(char*)malloc(sizeof(char*)*MAX_CONFIG_LINE);
-   config[THREADS]=(char*)malloc(sizeof(char*)*MAX_CONFIG_LINE);
+   config=(char**)malloc(sizeof(char*)*3);
+   config[PORT]=(char*)malloc(sizeof(char)*MAX_CONFIG_LINE);
+   config[PATH]=(char*)malloc(sizeof(char)*MAX_CONFIG_LINE);
+   config[THREADS]=(char*)malloc(sizeof(char)*MAX_CONFIG_LINE);
    initFromConfig(config);
+   int        thr_id[atoi(config[THREADS])];      
+   pthread_t  p_threads[atoi(config[THREADS])];   	
+   mutexes = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t) * atoi(config[THREADS]));
+   conditions = (pthread_cond_t *) malloc(sizeof(pthread_cond_t) * atoi(config[THREADS]));
+   sockets=(int*)malloc(sizeof(int)*atoi(config[THREADS]));
 
    if((sock=socket(PF_INET,SOCK_STREAM,0))<0){
       perror("Error in socket().");
@@ -62,7 +63,7 @@ int main(int argc,char* argv[]){
    }
    printf("Now listening on %d\n",port);
 	
-	for (i=0; i<THREADS; i++) {
+	for (i=0; i<atoi(config[THREADS]); i++) {
 		thr_id[i] = i;
 		sockets[i]=0;
 		pthread_create(&p_threads[i], NULL, &handle_requests_loop, (void*)&thr_id[i]);
@@ -74,7 +75,7 @@ int main(int argc,char* argv[]){
 	   i = 0;
 		while (sockets[i] != 0) {
 			i++;
-			if (i == THREADS)
+			if (i == atoi(config[THREADS]))
 				i = 0;
 		}
 	   
